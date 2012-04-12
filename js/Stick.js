@@ -1,0 +1,110 @@
+/**
+ * @author Patrick Wollrb
+ */
+
+(function(window) {
+	
+	var Stick = function(pointA, pointB, length) {
+		this.initialize(pointA, pointB, length);
+	}
+	
+	var p = Stick.prototype = new Container();
+	
+	p.shape = null;
+	
+	p._pointA = null;
+	p._pointB = null;
+	
+	p._length = 0.0;
+	p._diff = 0.0;
+	
+	p._x = 0.0;
+	p._y = 0.0;
+	p._oldX = 0.0;
+	p._oldY = 0.0;
+	
+	p.Container_initialize = p.initialize;
+	
+	p.initialize = function(pointA, pointB, length) {
+		
+		this.Container_initialize();
+		
+		
+		this._pointA = pointA;
+		this._pointB = pointB;
+		
+		
+		var dx = this._pointA.x - this._pointB.x;
+      	var dy = this._pointA.y - this._pointB.y;
+        this._length = Math.sqrt(dx * dx + dy * dy);
+		
+		
+		
+		console.log(this._length);
+		
+		
+		
+		this.shape = new Shape();
+		
+		var g = this.shape.graphics;
+		
+		g.setStrokeStyle(1);
+		g.beginStroke(Graphics.getRGB(0,0,0));
+		g.drawCircle(0,0,10)
+		g.moveTo(-50,0);
+		g.lineTo(50,0);
+		g.endFill();
+				
+		this.addChild(this.shape);
+	} 
+
+
+	p.update = function () {
+		  var dx = this._pointB.x - this._pointA.x;
+          var dy = this._pointB.y - this._pointA.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          
+          var diff = this._length - dist;
+          var offsetX = (diff * dx / dist) / 2;
+          var offsetY = (diff * dy / dist) / 2;
+	  	
+	  	this._pointA.setX(this._pointA.x - offsetX);
+	  	this._pointA.setY(this._pointA.y - offsetY);
+	  	this._pointB.setX(this._pointB.x + offsetX);
+	   	this._pointB.setY(this._pointB.y + offsetY);
+	        this._diff = diff;
+	        
+	        
+	        var g = this.shape.graphics;
+		g.clear();
+		g.setStrokeStyle(1);
+		g.beginStroke(Graphics.getRGB(0,0,0));
+		g.moveTo(this._pointA.x,this._pointA.y);
+		g.lineTo(this._pointB.x, this._pointB.y);
+		g.endFill();
+	       // this.x = (this._pointA.x + this._pointB.x) * 0.5;
+	       // this.y = (this._pointA.x + this._pointB.y) * 0.5;
+	       // this.rotation = (Math.atan2((this._pointB.x -  this._pointA.x) , (this._pointA.y - this._pointB.y) ) + 90)* 180 / Math.PI;
+	}
+	
+	p.getVX = function () {
+		return this._x - this._oldX;
+	}
+	
+	p.setVX = function (value) {
+		this._oldX = this._x - value;
+	}
+	
+	p.getVY = function () {
+		return this._y - this._oldY;
+	}
+	
+	p.setVY = function (value) {
+		this._oldY = this._y - value;
+	}
+	
+	
+	
+	window.Stick = Stick;
+	
+})(window)

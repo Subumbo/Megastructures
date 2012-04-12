@@ -1,0 +1,104 @@
+package subumbo.game.physics
+{
+        import flash.events.Event;
+        import flash.events.EventDispatcher;
+        import flash.events.TimerEvent;
+        import flash.geom.Rectangle;
+        import flash.utils.Timer;
+        
+        public class VerletWorld extends EventDispatcher
+        {
+                private const _timer:Timer = new Timer(30);
+                private const _sticks:Array = [];
+                private const _points:Array = [];
+                private var _stageRect:Rectangle;
+                
+                public function VerletWorld(stageRectangle:Rectangle=null)
+                {
+                        init(stageRectangle)
+                }
+                
+                private function init(stageRectangle:Rectangle=null):void
+                {
+                        _stageRect = stageRectangle;
+                }
+                
+                private function update(e:TimerEvent):void
+                {
+                        var lp:int;
+                        var ls:int = _sticks.length;
+                        var j:int;
+                        var i:int = lp = _points.length;
+                        
+                        var p:VerletPoint;
+                        
+                        while( --i > -1 )
+                        {
+                                p = VerletPoint(_points[i]);
+                                p.y += 0.5;
+                                p.update();
+                        }
+                        var stick:VerletStick;
+                        i = 1;
+                        while( --i > -1 )
+                        {
+                                
+                                j = ls;
+                                while( --j > -1 )
+                                {
+                                        stick = VerletStick(_sticks[j]);
+                                        if(stick.difference > 12.5)
+                                        {
+                                                _sticks.splice(i,1);
+                                                dispatchEvent(new Event(Event.COMPLETE));
+                                        } 
+                                        else stick.update();
+                                }
+                        }
+                }
+                
+                public function addPoint(point:VerletPoint):VerletPoint
+                {
+                        //trace(_points.length+1)
+                        _points.push(point);
+                        return point;
+                }
+                
+                public function addStick(pointA:VerletPoint, pointB:VerletPoint):VerletStick
+                {
+                        var stick:VerletStick = new VerletStick( pointA, pointB );
+                        _sticks.push( stick );
+                        return stick
+                }
+                
+                public function removeAll():void
+                {
+                        _sticks.length = 0;
+                        _points.length = 0;
+                }
+                
+                public function start():void
+                {
+                        _timer.addEventListener(TimerEvent.TIMER, update);
+                        _timer.start();
+                } 
+                
+                public function stop():void
+                {
+                        _timer.removeEventListener(TimerEvent.TIMER, update);
+                        _timer.stop();
+                }
+                
+                public function reset():void
+                {
+                        stop();
+                        _sticks.length = 0;
+                        _points.length = 0;
+                }
+                
+                public function set stageRect(val:Rectangle):void
+                {
+                        _stageRect = val;
+                }
+        }
+}

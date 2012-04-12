@@ -1,0 +1,120 @@
+package subumbo.game.physics
+{
+        import flash.display.Graphics;
+        import flash.geom.Rectangle;
+        
+        import subumbo.game.renderer.Renderable;
+        
+        public class VerletPoint implements Renderable
+        {
+                private var _x:Number;
+                private var _y:Number;
+                
+                private var _oldX:Number;
+                private var _oldY:Number;
+                
+                private var _fixed:Boolean;
+                
+                public function VerletPoint(x:Number, y:Number, fixed:Boolean = false)
+                {
+                        _fixed = fixed;
+                        setPosition(x, y);
+                }
+                
+                public function update():void
+                {
+                        var tempX:Number = _x;
+                        var tempY:Number = _y;
+                        _x += vx;
+                        _y += vy;
+                        _oldX = tempX;
+                        _oldY = tempY;
+                }
+                
+                public function setPosition(x:Number, y:Number):void
+                {
+                        this._x = _oldX = x;
+                        this._y = _oldY = y;
+                }
+                
+                public function constrain(rect:Rectangle):void
+                {
+                        _x = Math.max(rect.left, Math.min(rect.right, _x));
+                        _y = Math.max(rect.top, Math.min(rect.bottom, _y));
+                }
+                
+                public function set vx(value:Number):void
+                {
+                        _oldX = _x - value;
+                }
+                public function get vx():Number
+                {
+                        return _x - _oldX;
+                }
+                
+                public function set vy(value:Number):void
+                {
+                        _oldY = _y - value;
+                }
+                public function get vy():Number
+                {
+                        return _y - _oldY;
+                }
+                
+                public function render(g:Graphics):void
+                {
+                        g.beginFill(0);
+                        g.drawCircle(_x, _y, 4);
+                        g.endFill();
+                }
+                
+                public function get x():Number
+                {
+                        return _x;
+                }
+                
+                public function get y():Number
+                {
+                        return _y;
+                }
+                
+                public function get rotation():Number
+                {
+                        return 0;
+                }
+                
+                public function set x(val:Number):void
+                {
+                        if(_fixed) return;
+                        _x = val;       
+                }
+                
+                public function set y(val:Number):void
+                {
+                        if(_fixed) return;
+                        _y = val;       
+                }
+                
+                public function set fixed(val:Boolean):void
+                {
+                        _fixed = val;
+                }
+                
+                public function get fixed():Boolean
+                {
+                        return _fixed;
+                }
+                
+                public function get length():Number
+                {
+                        return 0;
+                }
+                
+                public function get difference():Number
+                {
+                        return 0;       
+                }
+
+        }
+}
+	
