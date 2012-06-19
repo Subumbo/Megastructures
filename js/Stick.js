@@ -4,16 +4,20 @@
 
 (function(window) {
 	
-	var Stick = function(pointA, pointB, length) {
-		this.initialize(pointA, pointB, length);
+	var Stick = function(pointA, pointB, length, gameOver) {
+		this.initialize(pointA, pointB, length, gameOver);
 	}
 	
 	var p = Stick.prototype = new Container();
 	
 	p.shape = null;
 	
+	p.bitmap = null;
+	
 	p._pointA = null;
 	p._pointB = null;
+	
+	p._gameOver = null;
 	
 	p._length = 0.0;
 	p._diff = 0.0;
@@ -25,7 +29,7 @@
 	
 	p.Container_initialize = p.initialize;
 	
-	p.initialize = function(pointA, pointB, length) {
+	p.initialize = function(pointA, pointB, length, gameOver) {
 		
 		this.Container_initialize();
 		
@@ -38,9 +42,9 @@
       	var dy = this._pointA.y - this._pointB.y;
         this._length = Math.sqrt(dx * dx + dy * dy);
 		
+		this._gameOver = gameOver;
 		
 		
-		console.log(this._length);
 		
 		
 		
@@ -56,6 +60,11 @@
 		g.endFill();
 				
 		this.addChild(this.shape);
+		
+		this.bitmap = new Bitmap('img/stick.png');
+		this.addChild(this.bitmap);
+		
+	
 	} 
 
 
@@ -65,6 +74,7 @@
           var dist = Math.sqrt(dx * dx + dy * dy);
           
           var diff = this._length - dist;
+          if(diff > 20) this._gameOver.call(this);
           var offsetX = (diff * dx / dist) / 2;
           var offsetY = (diff * dy / dist) / 2;
 	  	
@@ -74,6 +84,7 @@
 	   	this._pointB.setY(this._pointB.y + offsetY);
 	        this._diff = diff;
 	        
+	       // console.log('DIFF : ' + this._diff);
 	        
 	        var g = this.shape.graphics;
 		g.clear();
@@ -82,9 +93,15 @@
 		g.moveTo(this._pointA.x,this._pointA.y);
 		g.lineTo(this._pointB.x, this._pointB.y);
 		g.endFill();
-	       // this.x = (this._pointA.x + this._pointB.x) * 0.5;
-	       // this.y = (this._pointA.x + this._pointB.y) * 0.5;
-	       // this.rotation = (Math.atan2((this._pointB.x -  this._pointA.x) , (this._pointA.y - this._pointB.y) ) + 90)* 180 / Math.PI;
+		
+		
+			
+	       this.bitmap.regX = .5;
+	       this.bitmap.regY = 10;
+	       this.bitmap.scaleX = this._length;
+	       this.bitmap.y = (this._pointA.y + this._pointB.y) * 0.5;
+	       this.bitmap.x = (this._pointA.x + this._pointB.x) * 0.5;
+	       this.bitmap.rotation = (Math.atan2((this._pointB.x -  this._pointA.x) , (this._pointA.y - this._pointB.y) ) )* 180 / Math.PI + 90;
 	}
 	
 	p.getVX = function () {

@@ -10,14 +10,15 @@
 	});
 	
 	
+	
 	var points = [];
 	var sticks = [];
 	
 	var selectedPoint = null;
 	
 	var canvas = document.getElementById('canvas');
-	canvas.width = $(document).width();
-	canvas.height = $(document).height()
+	canvas.width = 600;
+	canvas.height = 800;	
 	
 	
 	var stage = new Stage(canvas);
@@ -80,16 +81,21 @@
 	function onPointSelected(e) {
 		
 		bg.onPress = createStick;
-		if(selectedPoint) {
+		if(selectedPoint && selectedPoint != e.target) {
 			createStick(e.target);
 			return;
 		}
 		selectedPoint = e.target;
+		selectedPoint.setSelected(true);
 		
 		
 
 	}
 	
+	function gameOver() {
+		$('#gameOver').css('display', 'block');
+		console.log('game over');
+	}
 	
 	function createStick(e) {
 		var point;
@@ -100,8 +106,8 @@
 			point.onPress = onPointSelected;				
 			scaffold.addChild(point);
 		}
-		var s = new Stick(point, selectedPoint);
-		scaffold.addChild(s); 
+		var s = new Stick(point, selectedPoint, null, gameOver);
+		scaffold.addChildAt(s,0); 
 		
 		var i = points.length;
 		var insert = true;
@@ -109,7 +115,7 @@
 			if(points[i] === point) {
 				insert = false;
 			}
-			
+			points[i].setSelected(false);
 			if(points[i].y < scaffoldHeight) scaffoldHeight = points[i].y;
 		}
 		if(insert) points.push(point);

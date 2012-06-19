@@ -12,9 +12,11 @@
 	
 	p.shape = null;
 	
-	this.fixed = false;
+	p.bitmap = null;
 	
-	this.selected = false;
+	p.fixed = false;
+	
+	p.selected = false;
 	
 	p._oldX = 0.0;
 	p._oldY = 0.0;
@@ -30,6 +32,8 @@
 		
 		this.Container_initialize();
 		
+		
+		
 		this.shape = new Shape();
 		
 		var g = this.shape.graphics;
@@ -39,6 +43,13 @@
 		g.endFill();
 				
 		this.addChild(this.shape);
+		
+		
+		this.bitmap = new Bitmap('img/bolt.png');
+		this.bitmap.regX = 25;
+		this.bitmap.regY = 25;
+		this.addChild(this.bitmap);
+
 	} 
 
 
@@ -54,12 +65,20 @@
 
 	}
 	
+	p.setSelected = function(val) {
+		this.selected = val;
+		if(val) 
+			this.shape.graphics.clear().beginFill('rgba(0,255,0,0.5)').drawCircle(0,0,35).endFill();
+		else 
+			this.shape.graphics.clear();
+	}
+	
 	p.onMouseOver = function(e) {
-		this.shape.graphics.clear().beginFill('#FF00FF').drawCircle(0,0,10).endFill();
+		if(!this.selected)this.shape.graphics.clear().beginFill('rgba(255,0,255,0.5)').drawCircle(0,0,35).endFill();
 	}
 	
 	p.onMouseOut = function(e) {
-		this.shape.graphics.clear().beginFill('#990000').drawCircle(0,0,10).endFill();
+		if(!this.selected) this.shape.graphics.clear();
 	}
 	
 	p.getVX = function () {

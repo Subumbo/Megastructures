@@ -99,6 +99,12 @@ nav ul a{
 	font-size: 2em;
 }
 
+#gameOver {
+ 	display: none;
+ 	position: absolute;
+ 	z-index: 1000;
+}
+
 
 
 
